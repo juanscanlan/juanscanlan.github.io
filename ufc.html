@@ -1,0 +1,711 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <title>Helios by HTML5 UP</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="assets/css/projects.css" />
+    <noscript>
+        <link rel="stylesheet" href="assets/css/noscript.css" />
+    </noscript>
+
+
+    <link rel="stylesheet" href="./assets/css/stackoverflow-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.3/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+</head>
+
+
+
+<body>
+
+
+    <div id="page-wrapper">
+
+        <!-- Nav -->
+        <nav id="nav">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li>
+                    <a href="#">ML Projects</a>
+                    <ul>
+                        <li><a href="#">UFC winner prediction</a></li>
+                        <li><a href="#">The Simpsons punchline classifier</a></li>
+                        <li><a href="#">Batman image classifier</a></li>
+                        <li>
+                            <a href="#">And a submenu &hellip;</a>
+                            <ul>
+                                <li><a href="#">Lorem ipsum dolor</a></li>
+                                <li><a href="#">Phasellus consequat</a></li>
+                                <li><a href="#">Magna phasellus</a></li>
+                                <li><a href="#">Etiam dolore nisl</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#">Veroeros feugiat</a></li>
+                    </ul>
+                </li>
+                <li><a href="left-sidebar.html">Academic Background</a></li>
+                <li><a href="right-sidebar.html">Extra Curricular</a></li>
+                <li><a href="no-sidebar.html">Contact</a></li>
+            </ul>
+        </nav>
+
+
+
+
+
+        <!-- Main -->
+        <div class="wrapper style2">
+            <article id="main" class="container special">
+                <div>
+                    <a href="#" class="image featured" style="padding-top:8em"><img src="images/ufc/ufcWide.jpg"
+                            alt="" /></a>
+                    <header>
+                        <h2 style="text-align:center"><strong>Predicting UFC winner from facial expressions</strong>
+                        </h2>
+                        <div style="padding-top: 1em; ">
+                            <a href="https://share.streamlit.io/juanscanlan/batmanclassifier/main/app.py"
+                                target="_blank"><button type="button"
+                                    style="height: 4em; margin: 0 auto; display: block; color: white; background-color:#64a19d; width: 20em;">This
+                                    Model is live! Test it here</button></a>
+                        </div>
+                        <p style='text-align: center'>
+                            This Model is live! Test it here.<br>
+                            Language: <i>Python</i><br>
+                            Packages: <i>Keras, Tensorflow, OpenCV</i>
+                        </p>
+                        </p>
+                    </header>
+                    <p>
+                        Most smartphones contain some sort of facial recognition software for the user.
+                        You feed it an image of your face (through your camera) and it will verify the identity of the
+                        user.
+                        <br>
+                        With this project, the algorithm will be trained on images of batman, scrapped from google
+                        images.
+                        <br>
+                        Will the dark night be able to hide from the algorithm?
+                        <br>
+                        <br>
+                    </p>
+                </div>
+
+                <div>
+                    <h2>Collecting The Data</h2>
+                    <p>
+                        For this project, the UFC "final decision" part of a fight will be used.
+                        More specifically, the moment after the fight has finished, the referee is holding the hands
+                        of the fighters, and the announcer is ABOUT to announce the winner. <br>
+                        For example, <i><a href="https://youtu.be/KpIwEhhHB0s?t=8" target="_blank">this video of
+                                McGregor vs
+                                Diaz</a></i> would be used from 0:08 to 0:44 (just before
+                        Bruce Buffer announces McGregor won the fight).<br>
+                        <br>
+                        102 fight decision videos were collected, ranging from UFC 225-261.
+                    </p>
+                    <p>The Batman folder contains 612 images of batman, ranging from movie actors to cartoons:</p>
+                    <figure style="margin-bottom: 5em">
+                        <img class="image featured" style="margin-bottom: 0em;" src="images/batman/SampleBatman.jpg"
+                            alt="" />
+                        <figcaption style="text-align:center">Example images of Batman, scrapped from Google images.
+                        </figcaption>
+                    </figure>
+                </div>
+
+                <div>
+                    <h2>Extracting the faces of the fighters</h2>
+                    <p>
+                        To simplify the task for the Machine Learning model, we will use as input the faces of the
+                        fighters (not the entire video frame).<br>
+                        This entire face extraction process is summarized in the following image:
+
+                    </p>
+                    <figure style="margin-bottom: 5em">
+                        <img class="image featured" style="margin-bottom: 0em;" src="images/ufc/ufcFaceExtraction.jpg"
+                            alt="" />
+                        <figcaption style="text-align:center">Face extraction process.
+                        </figcaption>
+                    </figure>
+                    <p>
+                        For each frame in the video, we extract a pair of face images corresponding to the fighters.
+                        We then select 16 images for each fighter, representing the entire length of the video.<br>
+                        The code used for this is shown below:
+                    </p>
+                    <pre style="margin-bottom: -4em; margin-top: -2em;">
+                        <code class="python" style="margin-bottom: 0em; font-weight:500">
+                            # Directory of all UFC fight decision videos
+                            rootdir = 'data\\'
+
+                            # Create a list of file locations for all the fights
+                            vid_dir = []
+                            for subdir, dirs, files in os.walk(rootdir):
+                                for file in files:
+                                    if str(file).endswith('.mp4'):
+                                        vid_dir.append((os.path.join(subdir, file)))
+                            print(vid_dir[0:3])
+                        </code>
+                    </pre>
+                    <pre style="margin-top: 0em;">
+                        <code class="text" style="background-color: #eee; color: #444; font-weight: 500">
+                            ['data\\225\\0_dosanjos_covington\\dosanjos_covington.mp4',
+                            'data\\225\\1_holm_anderson\\holm_anderson.mp4',
+                            'data\\225\\1_arlovski_tuivasa\\arlovski_tuivasa.mp4']
+                        </code>
+                    </pre>
+                    <p>
+                        The folder name starts with either a 0 or 1, depending which fighter won the fight decision:
+                    <ul>
+                        <li>0: Fighter on the left won the fight.</li>
+                        <li>1: Fighter on the right won the fight.</li>
+                    </ul>
+                    </p>
+                    <pre style="margin-bottom: -4em; margin-top: -2em;">
+                        <code class="python" style="margin-bottom: 0em; font-weight:500">
+                            # Takes as input the locations of all faces and their encodings. 
+                            # It then saves the current fighter's faces to its corresponding folder.
+                            def draw_faces(directory, face_locations, image, color: tuple, frame_count, fighter_enc, size=(224, 224), draw=True):    
+                                fighter_folder_names = ["A", "B"]
+                                fighter_a = fighter_enc[0]
+                                fighter_b = fighter_enc[1]
+                                for i, (top, right, bottom, left) in enumerate(face_locations):
+                                    if draw:
+                                        # Draws rectangle around current face
+                                        image = cv2.rectangle(
+                                            image,
+                                            (face_locations[i][3], face_locations[i][2]),
+                                            (face_locations[i][1], face_locations[i][0]),
+                                            color,
+                                            2,
+                                        )
+                                    # Crop and resize face image
+                                    crop_img = image[top:bottom, left:right]
+                                    crop_img = cv2.resize(crop_img, size)
+                                    
+                                    # Get encoding for current face
+                                    crop_enc = fc.face_encodings(
+                                        crop_img,
+                                        known_face_locations=[(0, crop_img.shape[1], crop_img.shape[0], 0)],
+                                    )
+                                    # Compare distance of current face encoding to the encoding of both fighters
+                                    a_distance = fc.face_distance(np.array(fighter_a), np.array(crop_enc))
+                                    b_distance = fc.face_distance(np.array(fighter_b), np.array(crop_enc))
+                                    distances = [a_distance, b_distance]
+                                    
+                                    # Get which fighter it is most similar to (smallest distance)
+                                    idx_smallest_distance = np.argmin(distances)
+                                    
+                                    # Set the name of the file (folder + frame number + .jpg)
+                                    name_temp = (
+                                        fighter_folder_names[idx_smallest_distance]
+                                        + "\\"
+                                        + str(frame_count)
+                                        + ".jpg"
+                                    )
+                                    
+                                    # If similar enough, save the face to the folder of the corresponding fighter 
+                                    if distances[idx_smallest_distance] < 0.6:
+                                        if not cv2.imwrite(os.path.join(os.path.dirname(directory), name_temp), crop_img):
+                                            raise Exception("Error")
+                        </code>
+                    </pre>
+                    <pre style="margin-bottom: -4em; margin-top: -2em;">
+                        <code class="python" style="margin-bottom: 0em; font-weight:500">
+                            # Extract faces of fighters for each fight to appropriate folders
+                            def face_extractor(directory):
+                                # Name of fighters
+                                fighter_directory = os.path.dirname(directory) + '\\fighters\\'
+                                fighter_names = [f for f in os.listdir(fighter_directory) if os.path.isfile(os.path.join(fighter_directory, f))]
+                                fighter_A = os.path.splitext(fighter_names[0])[0]
+                                fighter_B = os.path.splitext(fighter_names[1])[0]
+
+                                # Load faces of fighters
+                                fighter_a = np.array(fc.load_image_file(os.path.dirname(directory)+'\\fighters\\'+fighter_names[0]))
+                                fighter_b = np.array(fc.load_image_file(os.path.dirname(directory)+'\\fighters\\'+fighter_names[1]))
+                                
+                                # Face encodings of fighters
+                                fighter_a_enc = fc.face_encodings(fighter_a)
+                                fighter_b_enc = fc.face_encodings(fighter_b)
+                                fighter_enc = [fighter_a_enc, fighter_b_enc]
+                                
+                                # Start video capture of fight
+                                cap = cv2.VideoCapture(directory)
+
+                                frame_count = 0
+                                while True:
+                                    frame_count += 1
+                                    success, image = cap.read()
+                                    
+                                    # If the video file cannot be read, break
+                                    if not success:
+                                        break
+                                    
+                                    # Only use every 2 frames, to reduce file number
+                                    if frame_count % 2 != 0:
+                                        image = cv2.resize(image, (1080, 720))
+                                        
+                                        # Get locations and encodings of all faces in the current frame
+                                        face_locations = fc.face_locations(image)
+                                        img_encoding = fc.face_encodings(image)
+                                        
+                                        # Send the face locations and encodings to the draw_faces function
+                                        draw_faces(directory, face_locations, image, (255, 0, 0), frame_count, fighter_enc, size=(224, 224), draw=False)
+                                print("Successfully extracted {} vs {}".format(fighter_A, fighter_B))
+
+                            for video in vid_dir:
+                                face_extractor(video)
+                        </code>
+                    </pre>
+                    <pre style="margin-top: 0em;">
+                        <code class="text" style="background-color: #eee; color: #444; font-weight: 500">
+                            Successfully extracted andrade vs shevchenko
+                            Successfully extracted crute vs smith
+                            Successfully extracted masvidal vs usman
+                            .
+                            .
+                            .
+                        </code>
+                    </pre>
+                </div>
+                <div>
+                    <h2>
+                        Removing incorrect face extractions
+                    </h2>
+                    <p>
+                        Sometimes the referee, announcer, other people in the background, were incorrectly chosen as the
+                        most similar to the target fighter.<br>
+                        These had to be corrected by hand.<br>
+                        The following shows an errors made by the <i>face_extractor()</i> function.
+                    </p>
+                    <figure style="margin-bottom: 5em">
+                        <img class="image featured" style="margin-bottom: 0em;" src="images/ufc/IncorrectExtraction.jpg"
+                            alt="" />
+                        <figcaption style="text-align:center">Faces with red margins are incorrect.
+                        </figcaption>
+                    </figure>
+                    <P>
+                        It incorrectly extracted faces of the referee Herb Dean instead of the fighter Israel Adesanya.
+                        Surprisingly Herb Dean was mistaken for a handful of black fighters:
+                    </P>
+                </div>
+                <div>
+                    <h2>Selecting 16 images for each fighter</h2>
+                    <p>
+                        Some videos are far longer than others (upwards of 200 images per fighter).
+                        We want to represent the entire video sequence from beginning to end of the UFC official
+                        decision,
+                        so we take 16 equidistant images for each fighter in each fight (32 total per fight).
+                        This ensures a standard for the input size to the model and a larger discrepancy between frames
+                        (frames that are close together show minimal difference in facial expressions).
+
+                    </p>
+                    <pre style="margin-bottom: -4em; margin-top: -2em;">
+                        <code class="python" style="margin-bottom: 0em; font-weight:500">
+                            # Number of images
+                            num_images = 16
+                            # Destination directory
+                            dst_dir = 'training\\'
+
+                            # For a given fighter directory, return 16 image frames (equidistant) 
+                            def select_imgs(directory):
+                                import random
+                                # Get number of faces images that were generated for the current fighter
+                                img_count = len([name for name in os.listdir(directory) if os.path.isfile(os.path.join(directory, name))])
+                                # Step size between image file selection, so that - no matter how many files are in the directory - only 16 images are selected
+                                img_step = img_count//(num_images-1)
+
+                                # Image file list
+                                list_imgs = os.listdir(directory)
+                                
+                                # Create list of files, for the corresponing img_step
+                                file_list = []    
+                                for idx, file in enumerate(list_imgs):
+                                    if idx % img_step == 0:
+                                        file_list.append(file)
+
+                                # Sort file list by frame number 
+                                file_list = sorted(file_list, key=lambda file: int(file.split('_')[0]))
+                                
+                                # While the file list has more than 16 images, randomly remove 1
+                                while len(file_list) > num_images:
+                                    random_idx = random.randint(1,len(file_list))
+                                    file_list.pop(-random_idx)
+                                # While the file list has less than 16 images, append the final images from the image file list
+                                while len(file_list) < num_images:
+                                    i = 1
+                                    file_list.append(list_imgs[-i])
+                                    i = i + 1
+
+                                return file_list
+
+                            # Move the list of 16 images to the training folder
+                            def mover(video, dst_dir, num_images):
+                                a_dir = os.path.dirname(video) + '\\A\\'
+                                b_dir = os.path.dirname(video) + '\\B\\'
+                                
+                                # Get list of 16 images for each fighter
+                                a_list = select_imgs(a_dir)
+                                b_list = select_imgs(b_dir)
+                                
+                                # Use UFC number as folder name
+                                ufc_num = os.path.basename(os.path.dirname(os.path.dirname(video)))
+                                fight_name = os.path.basename(os.path.dirname(video))
+                                fight_dir = dst_dir + '\\' + fight_name[0] + '\\' + fight_name
+                                end_dir = [fight_dir + '\\A', 
+                                        fight_dir + '\\B']
+                                
+                                # If fight folder path does not exist, create it
+                                if not os.path.exists(fight_dir):
+                                    os.mkdir(fight_dir)
+
+                                # If fighter directory for given fight does not exist, create it
+                                for directory in end_dir:
+                                    if not os.path.exists(directory):
+                                        os.mkdir(directory)   
+
+                                # Copy the images to the training folder
+                                import shutil
+                                for img_a, img_b in zip(a_list, b_list):
+                                    shutil.copy(a_dir + img_a,
+                                        end_dir[0]) 
+                                    shutil.copy(b_dir + img_b,
+                                        end_dir[1]) 
+
+                                print('Successfully selected 32 images from {}'.format(fight_name[2:]))
+                            
+                            for video in vid_dir:
+                                mover(video, dst_dir, num_images)
+                        </code>
+                    </pre>
+                    <pre style="margin-top: 0em;">
+                        <code class="text" style="background-color: #eee; color: #444; font-weight: 500">
+                            Successfully selected 32 images from covington_dosanjos
+                            Successfully selected 32 images from anderson_holm
+                            Successfully selected 32 images from arlovski_tuivasa
+                            .
+                            .
+                            .
+                        </code>
+                    </pre>
+                </div>
+
+                <div>
+                    <h2>Processing the Images</h2>
+                    <pre style="margin-bottom: -4em; margin-top: -2em;">
+                        <code class="python" style="margin-bottom: 0em; font-weight:500">
+                            import os
+                            import glob
+                            import numpy as np
+                            from keras.preprocessing import image
+                            from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
+
+                            rootdir = 'training\\'
+
+                            # Get fight directories (0: fighter A won. 1: fighter B won)
+                            fight_dir_0 = glob.glob(rootdir + '\\0\\' + '*')
+                            fight_dir_1 = glob.glob(rootdir + '\\1\\' + '*')
+
+                            # Create arrays for fighters A and B
+                            data_A = []
+                            data_B = []
+                            y_labels = []
+
+                            def dir_to_array(directory):
+                                imgs_a = glob.glob(fight + '\\A\\' + '*')
+                                imgs_b = glob.glob(fight + '\\B\\' + '*')
+                                
+                                for file_a, file_b in zip(imgs_a, imgs_b):
+                                    img_a = image.load_img(file_a, target_size=(224,224))
+                                    img_a = image.img_to_array(img_a)
+                                    data_A.append(img_a)
+                                    
+                                    img_b = image.load_img(file_b, target_size=(224,224))
+                                    img_b = image.img_to_array(img_b)
+                                    data_B.append(img_b)        
+                                    
+                                    label = os.path.basename(directory)[0]
+                                    y_labels.append(label)
+
+                            for fight_0, fight_1 in zip(fight_dir_0, fight_dir_1):
+                                dir_to_array(fight_0)
+                                dir_to_array(fight_1)
+                            
+                            # Ensure data is a Numpy Array
+                            data_A = np.array(data_A)
+                            data_B = np.array(data_B)
+                            y_labels = np.array(y_labels).astype('int32')
+
+                            # Preprocess the data for input to MobileNetV2
+                            p_data_A = preprocess_input(data_A)
+                            p_data_B = preprocess_input(data_B)
+
+                            print("data_A shape: {}".format(data_A.shape))
+                            print("data_B shape: {}".format(data_B.shape))
+                            print("y_labels shape: {}".format(y_labels.shape))
+                        </code>
+                    </pre>
+                    <pre style="margin-top: 0em;">
+                        <code class="text" style="background-color: #eee; color: #444; font-weight: 500">
+                            p_data_A shape: (1536, 224, 224, 3)
+                            p_data_B shape: (1536, 224, 224, 3)
+                            y_labels shape: (1536,)
+                        </code>
+                    </pre>
+                    <p>
+                        Shuffle the Data and split into Training, Validation, Testing.
+                    </p>
+                    <pre style="margin-bottom: -4em; margin-top: -2em;">
+                        <code class="python" style="margin-bottom: 0em; font-weight:500">
+                            from sklearn.utils import shuffle
+
+                            # Shuffle the Data
+                            p_data_A, p_data_B, y_labels = shuffle(p_data_A, p_data_B, y_labels, random_state=seed_value)
+
+                            # Train, Validation, Test Split
+                            train_ratio = int(len(p_data_A)*0.6)
+                            val_ratio = int(len(p_data_A)*0.8)
+
+                            x_train_A = p_data_A[:train_ratio]
+                            x_train_B = p_data_B[:train_ratio]
+                            y_train = y_labels[:train_ratio]
+
+                            x_val_A = p_data_A[train_ratio:val_ratio]
+                            x_val_B = p_data_B[train_ratio:val_ratio]
+                            y_val = y_labels[train_ratio:val_ratio]
+
+                            x_test_A = p_data_A[val_ratio:]
+                            x_test_B = p_data_B[val_ratio:]
+                            y_test = y_labels[val_ratio:]
+                        </code>
+                    </pre>
+                </div>
+                <div>
+                    <h2>Creating a Two-Input Data Generator</h2>
+                    <p>
+                        Training Machine Learning models depends heavily on quanitity and diversity of data.
+                        We can increase the size and diversity of the training set by using data augmentation.
+                        Below we define a function that takes the face images of both fighters
+                        and slightly modifies them (through rotation, shear, zoom, flipping, etc), before being fed to
+                        the model.
+                    </p>
+                    <pre style="margin-bottom: -4em; margin-top: -2em;">
+                        <code class="python" style="margin-bottom: 4em; font-weight:500">
+                            def generator_two_img(X1, X2, y, batch_size):
+                                gen = ImageDataGenerator(
+                                    rotation_range=20,
+                                    width_shift_range=0.1,
+                                    height_shift_range=0.1,
+                                    shear_range=0.1,
+                                    zoom_range=0.2,
+                                    fill_mode="nearest",
+                                    horizontal_flip=True,
+                                    vertical_flip=False)
+                                
+                                # Fighter A
+                                genX1 = gen.flow(X1, y,  batch_size=batch_size, seed=1)
+                                # Fighter B
+                                genX2 = gen.flow(X2, y, batch_size=batch_size, seed=1)
+                                while True:
+                                    X1i = genX1.next()
+                                    X2i = genX2.next()
+                                    yield [X1i[0], X2i[0]], X1i[1]
+                        </code>
+                    </pre>
+                    <h3>Example of data augmentation</h3>
+                    <p>
+                        Below is the same image of Jon Jones modified 20 times.
+                        The image has been randomly altered so that, everytime it is resued for training, it is slightly
+                        different.
+                        This gives the model a more general understanding of the image information.
+
+                    </p>
+                    <figure style="margin-bottom: 5em">
+                        <img class="image featured" style="margin-bottom: 0em;" src="images/ufc/augmentationExample.jpg"
+                            alt="" />
+                        <figcaption style="text-align:center">Random alterations to the same image.
+                        </figcaption>
+                    </figure>
+                </div>
+                <div>
+                    <h2>Training the Model</h2>
+                    <pre style="margin-bottom: -4em; margin-top: -2em;">
+                        <code class="python" style="margin-bottom: 4em; font-weight:500">
+                            encoder = tf.keras.applications.MobileNetV2(
+                                include_top=False,
+                                weights="imagenet",
+                                input_tensor=None,
+                                input_shape=(224, 224, 3))
+
+                            
+                        </code>
+                    </pre>
+                </div>
+
+
+                <!-- Footer -->
+                <div id="footer">
+                    <div class="container">
+                        <div class="row">
+
+                            <!-- Tweets -->
+                            <section class="col-4 col-12-mobile">
+                                <header>
+                                    <h2 class="icon brands fa-twitter circled"><span class="label">Tweets</span></h2>
+                                </header>
+                                <ul class="divided">
+                                    <li>
+                                        <article class="tweet">
+                                            Amet nullam fringilla nibh nulla convallis tique ante sociis accumsan.
+                                            <span class="timestamp">5 minutes ago</span>
+                                        </article>
+                                    </li>
+                                    <li>
+                                        <article class="tweet">
+                                            Hendrerit rutrum quisque.
+                                            <span class="timestamp">30 minutes ago</span>
+                                        </article>
+                                    </li>
+                                    <li>
+                                        <article class="tweet">
+                                            Curabitur donec nulla massa laoreet nibh. Lorem praesent montes.
+                                            <span class="timestamp">3 hours ago</span>
+                                        </article>
+                                    </li>
+                                    <li>
+                                        <article class="tweet">
+                                            Lacus natoque cras rhoncus curae dignissim ultricies. Convallis orci
+                                            aliquet.
+                                            <span class="timestamp">5 hours ago</span>
+                                        </article>
+                                    </li>
+                                </ul>
+                            </section>
+
+                            <!-- Posts -->
+                            <section class="col-4 col-12-mobile">
+                                <header>
+                                    <h2 class="icon solid fa-file circled"><span class="label">Posts</span></h2>
+                                </header>
+                                <ul class="divided">
+                                    <li>
+                                        <article class="post stub">
+                                            <header>
+                                                <h3><a href="#">Nisl fermentum integer</a></h3>
+                                            </header>
+                                            <span class="timestamp">3 hours ago</span>
+                                        </article>
+                                    </li>
+                                    <li>
+                                        <article class="post stub">
+                                            <header>
+                                                <h3><a href="#">Phasellus portitor lorem</a></h3>
+                                            </header>
+                                            <span class="timestamp">6 hours ago</span>
+                                        </article>
+                                    </li>
+                                    <li>
+                                        <article class="post stub">
+                                            <header>
+                                                <h3><a href="#">Magna tempus consequat</a></h3>
+                                            </header>
+                                            <span class="timestamp">Yesterday</span>
+                                        </article>
+                                    </li>
+                                    <li>
+                                        <article class="post stub">
+                                            <header>
+                                                <h3><a href="#">Feugiat lorem ipsum</a></h3>
+                                            </header>
+                                            <span class="timestamp">2 days ago</span>
+                                        </article>
+                                    </li>
+                                </ul>
+                            </section>
+
+                            <!-- Photos -->
+                            <section class="col-4 col-12-mobile">
+                                <header>
+                                    <h2 class="icon solid fa-camera circled"><span class="label">Photos</span></h2>
+                                </header>
+                                <div class="row gtr-25">
+                                    <div class="col-6">
+                                        <a href="#" class="image fit"><img src="images/pic10.jpg" alt="" /></a>
+                                    </div>
+                                    <div class="col-6">
+                                        <a href="#" class="image fit"><img src="images/pic11.jpg" alt="" /></a>
+                                    </div>
+                                    <div class="col-6">
+                                        <a href="#" class="image fit"><img src="images/pic12.jpg" alt="" /></a>
+                                    </div>
+                                    <div class="col-6">
+                                        <a href="#" class="image fit"><img src="images/pic13.jpg" alt="" /></a>
+                                    </div>
+                                    <div class="col-6">
+                                        <a href="#" class="image fit"><img src="images/pic14.jpg" alt="" /></a>
+                                    </div>
+                                    <div class="col-6">
+                                        <a href="#" class="image fit"><img src="images/pic15.jpg" alt="" /></a>
+                                    </div>
+                                </div>
+                            </section>
+
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-12">
+
+                                <!-- Contact -->
+                                <section class="contact">
+                                    <header>
+                                        <h3>Nisl turpis nascetur interdum?</h3>
+                                    </header>
+                                    <p>Urna nisl non quis interdum mus ornare ridiculus egestas ridiculus lobortis
+                                        vivamus
+                                        tempor aliquet.</p>
+                                    <ul class="icons">
+                                        <li><a href="#" class="icon brands fa-twitter"><span
+                                                    class="label">Twitter</span></a>
+                                        </li>
+                                        <li><a href="#" class="icon brands fa-facebook-f"><span
+                                                    class="label">Facebook</span></a></li>
+                                        <li><a href="#" class="icon brands fa-instagram"><span
+                                                    class="label">Instagram</span></a></li>
+                                        <li><a href="#" class="icon brands fa-pinterest"><span
+                                                    class="label">Pinterest</span></a></li>
+                                        <li><a href="#" class="icon brands fa-dribbble"><span
+                                                    class="label">Dribbble</span></a>
+                                        </li>
+                                        <li><a href="#" class="icon brands fa-linkedin-in"><span
+                                                    class="label">Linkedin</span></a></li>
+                                    </ul>
+                                </section>
+
+                                <!-- Copyright -->
+                                <div class="copyright">
+                                    <ul class="menu">
+                                        <li>&copy; Untitled. All rights reserved.</li>
+                                        <li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+                                    </ul>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+        </div>
+
+        <!-- Scripts -->
+        <script src="assets/js/jquery.min.js"></script>
+        <script src="assets/js/jquery.dropotron.min.js"></script>
+        <script src="assets/js/jquery.scrolly.min.js"></script>
+        <script src="assets/js/jquery.scrollex.min.js"></script>
+        <script src="assets/js/browser.min.js"></script>
+        <script src="assets/js/breakpoints.min.js"></script>
+        <script src="assets/js/util.js"></script>
+        <script src="assets/js/main.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,549 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <title>Helios by HTML5 UP</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="assets/css/projects.css" />
+    <noscript>
+        <link rel="stylesheet" href="assets/css/noscript.css" />
+    </noscript>
+
+
+    <link rel="stylesheet" href="./assets/css/stackoverflow-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.0.3/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+</head>
+
+
+
+<body>
+
+
+    <div id="page-wrapper">
+
+        <!-- Nav -->
+        <nav id="nav">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li>
+                    <a href="#">ML Projects</a>
+                    <ul>
+                        <li><a href="ufc.html">UFC winner prediction</a></li>
+                        <li><a href="#">The Simpsons punchline classifier</a></li>
+                        <li><a href="batman.html">Batman image classifier</a></li>
+                        <li>
+                            <a href="#">And a submenu &hellip;</a>
+                            <ul>
+                                <li><a href="#">Lorem ipsum dolor</a></li>
+                                <li><a href="#">Phasellus consequat</a></li>
+                                <li><a href="#">Magna phasellus</a></li>
+                                <li><a href="#">Etiam dolore nisl</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#">Veroeros feugiat</a></li>
+                    </ul>
+                </li>
+                <li><a href="index.html#features">Academic Background</a></li>
+                <li><a href="right-sidebar.html">Extra Curricular</a></li>
+                <li><a href="index.html#footer">Contact</a></li>
+            </ul>
+        </nav>
+
+
+
+
+
+        <!-- Main -->
+        <div class="wrapper style2">
+            <article id="main" class="container special">
+                <div>
+                    <a href="#" class="image featured" style="padding-top:8em"><img src="images/FatBatmanWide.jpg"
+                            alt="" /></a>
+                    <header>
+                        <h2 style="text-align:center"><strong>Batman Image Classifier</strong></h2>
+                        <div style="padding-top: 1em; ">
+                            <a href="https://share.streamlit.io/juanscanlan/batmanclassifier/main/app.py"
+                                target="_blank"><button type="button"
+                                    style="height: 4em; margin: 0 auto; display: block; color: white; background-color:#64a19d; width: 20em;">This
+                                    Model is live! Test it here</button></a>
+                        </div>
+                        <p style='text-align: center'>
+                            This Model is live! Test it here.<br>
+                            Language: <i>Python</i><br>
+                            Packages: <i>Keras, Tensorflow, Selenium</i>
+                        </p>
+                        </p>
+                    </header>
+                    <p>
+                        Most smartphones contain some sort of facial recognition software for the user.
+                        You feed it an image of your face (through your camera) and it will verify the identity of the
+                        user.
+                        <br>
+                        With this project, the algorithm will be trained on images of batman, scrapped from google
+                        images.
+                        <br>
+                        Will the dark night be able to hide from the algorithm?
+                        <br>
+                        <br>
+                    </p>
+                </div>
+
+
+                <h2>Collecting Batman Images</h2>
+                <p>
+                    Google images is a great tool for collecting image training sets.<br>
+                    Adrian Rosebrock from pyimagesearch.com created a <b><a
+                            href='https://www.pyimagesearch.com/2017/12/04/how-to-create-a-deep-learning-dataset-using-google-images/'
+                            target="_blank">simple guide</a></b>
+                    for this data collection.<br>
+                    The basic idea is to:
+
+                <ul>
+                    <li>Google image search your desired term (Batman).</li>
+                    <li>Scroll down until images are no longer relevant to search term (no longer batman images).</li>
+                    <li>Run a JavaScript code in the browser console to create a .txt file containig the urls of all the
+                        images on the page.</li>
+                    <li>Iterate through list of urls and download the images into the training folder, removing any
+                        duplicates found.</li>
+                </ul>
+                </p>
+                <p>The Batman folder contains 612 images of batman, ranging from movie actors to cartoons:</p>
+                <figure style="margin-bottom: 5em">
+                    <img class="image featured" style="margin-bottom: 0em;" src="images/batman/SampleBatman.jpg"
+                        alt="" />
+                    <figcaption style="text-align:center">Example images of Batman, scrapped from Google images.
+                    </figcaption>
+                </figure>
+                <h2>Datasets: UK Bench & Labeled Faces Wild (LFW)</h2>
+                <p>
+                    The non-Batman images used for training come from two datasets:
+                </p>
+                <ul>
+                    <li>UK Bench: 10,200 images of random objects. Used to train image search engines.
+                        (Image sizes: 640x480 px)
+                    </li>
+                    <li>Labeled Faces Wild: Faces of 5,749 famous people. Used for face recognition training.
+                        (Image sizes: 250x250 px)
+                    </li>
+                </ul>
+                <p>
+                    Two datasets are used so the model can discriminate between objects (UK Bench) and people (LFW):
+                </p>
+                <figure style="margin-bottom: 5em">
+                    <img class="image featured" style="margin-bottom: 0em;" src="images/batman/NonBatmanSamples.jpg"
+                        alt="" />
+                    <figcaption style="text-align:center">(Left) UK Bench image samples. (Right) LFG image samples.
+                    </figcaption>
+                </figure>
+
+                <h2>Processing the Data</h2>
+                <p>
+                    Getting image paths from Dataset directories:
+                </p>
+
+                <pre style="margin-bottom: -4em; margin-top: -2em;">
+                    <code class="python" style="margin-bottom: 0em; font-weight:500">
+                        import os
+                        import glob
+
+                        # Set directory paths for Datasets
+                        dir_batman = 'images\\batman\\'
+                        dir_ukbench = 'images\\ukbench\\'
+                        dir_lfw = 'images\\labeledfaceswild\\'
+
+                        # Get list of Batman image file pahts
+                        paths_batman = glob.glob(dir_batman + '*.jpg')
+
+                        # Get list of UKBench image file paths
+                        paths_ukbench = glob.glob(dir_ukbench + '*.jpg')
+
+                        # Get list of lfw image files paths 
+                        # LFW directory contains folders for each celebrity, so more code is needed to extract image paths.
+                        celebrities = os.listdir(dir_lfw)
+                        paths_lfw = []
+                        for person in celebrities:
+                            path = dir_lfw + person
+                            img = os.listdir(path)[0] # Select only 1 image per person 
+                            paths_lfw.append(path + '\\' + img)
+
+                        print("Batman images: ", len(paths_batman))
+                        print("UKBench images: ", len(paths_ukbench))
+                        print("LFW images: ", len(paths_lfw))
+                        print("Sample of paths_batman:    " + paths_batman[0])
+                        print("Sample of paths_ukbench:   " + paths_ukbench[0])
+                        print("Sample of paths_lfw_imgs:  " + paths_lfw[0])
+                    </code>
+                </pre>
+                <div>
+                    <pre style="margin-top: 0em;">
+                        <code class="text" style="background-color: #eee; color: #444; font-weight: 500">
+                            Batman images:  612
+                            UKBench images:  10200
+                            LFW images:  5749
+                            Sample of paths_batman:    images\batman\00000000.jpg
+                            Sample of paths_ukbench:   images\ukbench\ukbench00000.jpg
+                            Sample of paths_lfw_imgs:  images\labeledfaceswild\Aaron_Eckhart\Aaron_Eckhart_0001.jpg
+                        </code>
+                    </pre>
+                </div>
+                <p>
+                    Loading images from path lists and sending them to a multidimensional array:
+                </p>
+                <div>
+                    <pre style="margin-bottom: -4em; margin-top: -2em; font-weight:500">
+                        <code class="python">
+                            import random
+                            import numpy as np
+                            from keras.preprocessing import image
+
+                            # Loads each image, resizes it, and it to an array
+                            def load_images(file_list, img_size):
+                                image_array = []
+                                for file in file_list:
+                                    img = image.load_img(file, target_size=(img_size))
+                                    img = image.img_to_array(img)
+                                    image_array.append(img)
+                                image_array = np.array(image_array)
+                                return image_array
+
+                            # Takes a list, the number of images to sapmle from the list, and the image size.
+                            # Outputs an array with all the images
+                            def list_to_array(file_list, image_number=None, img_size=(224, 224)):
+                                image_array = []
+                                if image_number:
+                                    if image_number > len(file_list):
+                                        raise Exception("imagenumber={} larger than available images ({})".format(image_number, len(file_list)))
+                                    file_list = random.sample(file_list, image_number)
+                                    array = load_images(file_list, img_size)
+                                    return array
+                                
+                                else:
+                                    array = load_images(file_list, img_size)
+                                    return array
+                            
+                            # Get array of images for each Dataset
+                            imgs_batman = list_to_array(paths_batman)
+                            imgs_ukbench = list_to_array(paths_ukbench, image_number=500) # Select 500 images
+                            imgs_lfw = list_to_array(paths_lfw, image_number=500)         # Select 500 images
+                            # Join together UKBench and LFW images
+                            imgs_not_batman = np.concatenate((imgs_ukbench, imgs_lfw))
+                            
+                            print("(Number of samples, width, height, RGB channels)")
+                            print("imgs_batman shape:     ", imgs_batman.shape)
+                            print("imgs_not_batman shape: ", imgs_not_batman.shape)
+                        </code>
+                    </pre>
+                </div>
+                <div>
+                    <pre style="margin-top: 0em;">
+                        <code class="text" style="background-color: #eee; color: #444; font-weight: 500">
+                            (Number of samples, width, height, RGB channels)
+                            imgs_batman shape:      (612, 224, 224, 3)
+                            imgs_not_batman shape:  (1000, 224, 224, 3)
+                        </code>
+                    </pre>
+                </div>
+                <p>
+                    Setting the labels for the images:
+                </p>
+                <div>
+                    <pre style="margin-bottom: 0em; margin-top: -2em; font-weight:500">
+                        <code class="python">
+                            from sklearn.utils import shuffle
+                            from sklearn.model_selection import train_test_split
+                            from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
+
+                            # 1 if image is of Batman. If not 0.
+                            labels_batman = [1 for x in range(len(imgs_batman))]
+                            labels_not_batman = [0 for x in range(len(imgs_not_batman))]
+                        
+                            # Join Batman & Not-Batman images and labels
+                            data = np.concatenate((imgs_batman, imgs_not_batman))
+                            labels = np.concatenate((labels_batman, labels_not_batman))
+                        
+                            # Shuffle the data
+                            shuffled_data, shuffled_labels = shuffle(data, labels, random_state=0)
+
+                            # Create 80/20 Training and Testing data.
+                            x_train, x_test, y_train, y_test = 
+                                train_test_split(shuffled_data, shuffled_labels, test_size=0.2, random_state=0)
+
+                            # Split training data into Train and Dev sets. 75/25.
+                            x_train, x_val, y_train, y_val = 
+                                train_test_split(x_train, y_train, test_size=0.25, random_state=0)
+
+                            # Preprocess data for feeding into MobileNetV2 architecture
+                            x_train = preprocess_input(x_train)
+                            x_val = preprocess_input(x_val)
+                            x_test = preprocess_input(x_test)
+
+                        </code>
+                    </pre>
+                </div>
+                <p>
+                    Creating the Model with Transfer learning from MobileNetV2:
+                </p>
+                <div>
+                    <pre style="margin-bottom: 0em; margin-top: -2em; font-weight:500">
+                        <code class="python">
+                            from tensorflow.keras.layers import Input
+                            from tensorflow.keras.layers import Dense, GlobalAveragePooling2D, Dropout
+                            from tensorflow.keras.models import Model
+
+                            # Transfer learning from MobileNetv2. Extracts meaniningful features from images.
+                            base_model = tf.keras.applications.MobileNetV2(
+                                input_shape=(224,224,3),
+                                include_top=False,
+                                weights="imagenet")
+
+                            # Freeze the weights of the base model
+                            for layer in base_model.layers:
+                                layer.trainable = False
+
+                            # Create top of model
+                            input_A = Input(shape=(224, 224, 3), name='img_input')
+                            x = base_model(input_A)
+                            x = GlobalAveragePooling2D()(x)
+                            x = Dense(64, activation='relu')(x)
+                            x = Dropout(0.2)(x)
+                            x = Dense(16, activation='relu')(x)
+                            prediction = Dense(1, activation='sigmoid')(x)
+
+                            model = Model(inputs=input_A, outputs=prediction)
+                        </code>
+                    </pre>
+                    <figure style="margin-bottom: 5em">
+                        <img class="image featured" style="margin-bottom: 0em;" src="images/batman/ModelPlot.png"
+                            alt="" />
+                        <figcaption style="text-align:center">Plot of Model Architecture, using MobileNetV2 as the base.
+                        </figcaption>
+                    </figure>
+                    <p>
+                        Setting up Tesnorflow Callbacks and Compiling the Model:
+                    </p>
+                    <div>
+                        <pre style="margin-bottom: -4em; margin-top: -2em; font-weight:500">
+                            <code class="language-python hljs">
+                                csv_logger = tf.keras.callbacks.CSVLogger(('models/history_logs/' + name_model + '.log'), separator=',', append=False)
+
+                                opt = tf.keras.optimizers.SGD(learning_rate=0.0001, momentum=0.9)
+                                checkpoint_cb = tf.keras.callbacks.ModelCheckpoint(
+                                    ("models/mobilenetv2/" + name_model + ".h5"), monitor="val_accuracy", save_best_only=True)
+                                early_stopping_cb = tf.keras.callbacks.EarlyStopping(monitor='val_accuracy', patience=10)
+                                model.compile(optimizer=opt, loss='binary_crossentropy', metrics=["accuracy"])
+
+                                history = model.fit(
+                                    x=x_train, y=y_train,
+                                    validation_data=(x_val, y_val),
+                                    batch_size=64, epochs=50, 
+                                    verbose=1, 
+                                    shuffle=True,
+                                    callbacks=[checkpoint_cb, early_stopping_cb, csv_logger])
+                            </code>
+                        </pre>
+                    </div>
+                    <div>
+                        <pre style="margin-top: 0em;">
+                            <code class="text" style="background-color: #eee; color: #444; font-weight: 500">
+                                Epoch 1/80
+                                16/16 [==============================] - 9s 196ms/step - loss: 0.7448 - accuracy: 0.5062 - val_loss: 0.6698 - val_accuracy: 0.5697
+                                Epoch 2/80
+                                16/16 [==============================] - 2s 115ms/step - loss: 0.6524 - accuracy: 0.5983 - val_loss: 0.6148 - val_accuracy: 0.6471
+                                Epoch 3/80
+                                16/16 [==============================] - 2s 115ms/step - loss: 0.5918 - accuracy: 0.6812 - val_loss: 0.5818 - val_accuracy: 0.6966
+                                Epoch 4/80
+                                16/16 [==============================] - 2s 114ms/step - loss: 0.5482 - accuracy: 0.7412 - val_loss: 0.5564 - val_accuracy: 0.7276
+                                Epoch 5/80
+                                16/16 [==============================] - 2s 113ms/step - loss: 0.5217 - accuracy: 0.7526 - val_loss: 0.5322 - val_accuracy: 0.7523
+                                .
+                                .
+                                .
+                                Epoch 65/80
+                                16/16 [==============================] - 2s 115ms/step - loss: 0.1213 - accuracy: 0.9658 - val_loss: 0.1448 - val_accuracy: 0.9567
+                                Epoch 66/80
+                                16/16 [==============================] - 2s 116ms/step - loss: 0.1184 - accuracy: 0.9638 - val_loss: 0.1446 - val_accuracy: 0.9567
+                                Epoch 67/80
+                                16/16 [==============================] - 2s 115ms/step - loss: 0.1210 - accuracy: 0.9679 - val_loss: 0.1454 - val_accuracy: 0.9536
+                            </code>
+                        </pre>
+                    </div>
+                    <p>
+                        The Early Stopping Callback has stopped the training after the Validation Accuracy decreases.
+                        This prevents the model from overfitting.
+                    </p>
+                    <figure style="margin-bottom: 5em">
+                        <img class="image featured" style="margin-bottom: 0em;" src="images/batman//Loss.png" alt="" />
+                        <img class="image featured" style="margin-bottom: 0em;" src="images/batman//Accuracy.png"
+                            alt="" />
+                        <figcaption style="text-align:center">Plot of Model Loss and Accuracy after 67 Epochs.
+                        </figcaption>
+                    </figure>
+                </div>
+            </article>
+        </div>
+
+        <!-- Footer -->
+        <div id="footer">
+            <div class="container">
+                <div class="row">
+
+                    <!-- Tweets -->
+                    <section class="col-4 col-12-mobile">
+                        <header>
+                            <h2 class="icon brands fa-twitter circled"><span class="label">Tweets</span></h2>
+                        </header>
+                        <ul class="divided">
+                            <li>
+                                <article class="tweet">
+                                    Amet nullam fringilla nibh nulla convallis tique ante sociis accumsan.
+                                    <span class="timestamp">5 minutes ago</span>
+                                </article>
+                            </li>
+                            <li>
+                                <article class="tweet">
+                                    Hendrerit rutrum quisque.
+                                    <span class="timestamp">30 minutes ago</span>
+                                </article>
+                            </li>
+                            <li>
+                                <article class="tweet">
+                                    Curabitur donec nulla massa laoreet nibh. Lorem praesent montes.
+                                    <span class="timestamp">3 hours ago</span>
+                                </article>
+                            </li>
+                            <li>
+                                <article class="tweet">
+                                    Lacus natoque cras rhoncus curae dignissim ultricies. Convallis orci aliquet.
+                                    <span class="timestamp">5 hours ago</span>
+                                </article>
+                            </li>
+                        </ul>
+                    </section>
+
+                    <!-- Posts -->
+                    <section class="col-4 col-12-mobile">
+                        <header>
+                            <h2 class="icon solid fa-file circled"><span class="label">Posts</span></h2>
+                        </header>
+                        <ul class="divided">
+                            <li>
+                                <article class="post stub">
+                                    <header>
+                                        <h3><a href="#">Nisl fermentum integer</a></h3>
+                                    </header>
+                                    <span class="timestamp">3 hours ago</span>
+                                </article>
+                            </li>
+                            <li>
+                                <article class="post stub">
+                                    <header>
+                                        <h3><a href="#">Phasellus portitor lorem</a></h3>
+                                    </header>
+                                    <span class="timestamp">6 hours ago</span>
+                                </article>
+                            </li>
+                            <li>
+                                <article class="post stub">
+                                    <header>
+                                        <h3><a href="#">Magna tempus consequat</a></h3>
+                                    </header>
+                                    <span class="timestamp">Yesterday</span>
+                                </article>
+                            </li>
+                            <li>
+                                <article class="post stub">
+                                    <header>
+                                        <h3><a href="#">Feugiat lorem ipsum</a></h3>
+                                    </header>
+                                    <span class="timestamp">2 days ago</span>
+                                </article>
+                            </li>
+                        </ul>
+                    </section>
+
+                    <!-- Photos -->
+                    <section class="col-4 col-12-mobile">
+                        <header>
+                            <h2 class="icon solid fa-camera circled"><span class="label">Photos</span></h2>
+                        </header>
+                        <div class="row gtr-25">
+                            <div class="col-6">
+                                <a href="#" class="image fit"><img src="images/pic10.jpg" alt="" /></a>
+                            </div>
+                            <div class="col-6">
+                                <a href="#" class="image fit"><img src="images/pic11.jpg" alt="" /></a>
+                            </div>
+                            <div class="col-6">
+                                <a href="#" class="image fit"><img src="images/pic12.jpg" alt="" /></a>
+                            </div>
+                            <div class="col-6">
+                                <a href="#" class="image fit"><img src="images/pic13.jpg" alt="" /></a>
+                            </div>
+                            <div class="col-6">
+                                <a href="#" class="image fit"><img src="images/pic14.jpg" alt="" /></a>
+                            </div>
+                            <div class="col-6">
+                                <a href="#" class="image fit"><img src="images/pic15.jpg" alt="" /></a>
+                            </div>
+                        </div>
+                    </section>
+
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-12">
+
+                        <!-- Contact -->
+                        <section class="contact">
+                            <header>
+                                <h3>Nisl turpis nascetur interdum?</h3>
+                            </header>
+                            <p>Urna nisl non quis interdum mus ornare ridiculus egestas ridiculus lobortis vivamus
+                                tempor aliquet.</p>
+                            <ul class="icons">
+                                <li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a>
+                                </li>
+                                <li><a href="#" class="icon brands fa-facebook-f"><span
+                                            class="label">Facebook</span></a></li>
+                                <li><a href="#" class="icon brands fa-instagram"><span
+                                            class="label">Instagram</span></a></li>
+                                <li><a href="#" class="icon brands fa-pinterest"><span
+                                            class="label">Pinterest</span></a></li>
+                                <li><a href="#" class="icon brands fa-dribbble"><span class="label">Dribbble</span></a>
+                                </li>
+                                <li><a href="#" class="icon brands fa-linkedin-in"><span
+                                            class="label">Linkedin</span></a></li>
+                            </ul>
+                        </section>
+
+                        <!-- Copyright -->
+                        <div class="copyright">
+                            <ul class="menu">
+                                <li>&copy; Untitled. All rights reserved.</li>
+                                <li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+                            </ul>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/jquery.dropotron.min.js"></script>
+    <script src="assets/js/jquery.scrolly.min.js"></script>
+    <script src="assets/js/jquery.scrollex.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+
+</body>
+
+</html>
