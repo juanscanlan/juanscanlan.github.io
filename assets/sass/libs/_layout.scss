@@ -1,0 +1,13 @@
+.frontEnd__container {
+  display: flex;
+  color: beige;
+
+  &-div {
+    flex: auto;
+
+    &-img {
+      width: 100%;
+      color: blue;
+    }
+  }
+}
