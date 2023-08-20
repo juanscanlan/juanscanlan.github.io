@@ -1910,7 +1910,8 @@ footer {
 .image.featured {
   display: block;
   width: 100%;
-  margin: 0 0 4em 0;
+  margin: 0 0 24px 0;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.3);
 }
 
 .image.left {
@@ -2305,9 +2306,19 @@ header .icon.circled {
       from(rgba(0, 0, 0, 0.5)),
       to(rgba(0, 0, 0, 0.5))
     ),
+    url("../../images/background/lake.webp");
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.5)),
+    url("../../images/background/lake.webp");
+  /* background: -webkit-gradient(
+      linear,
+      left bottom,
+      left top,
+      from(rgba(0, 0, 0, 0.5)),
+      to(rgba(0, 0, 0, 0.5))
+    ),
     url("../../images/FlowerBackground.jpg");
   background: linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-    url("../../images/FlowerBackground.jpg");
+    url("../../images/FlowerBackground.jpg"); */
 
   background-size: cover;
   background-position: center center;
